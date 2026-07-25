@@ -3,9 +3,19 @@
 - Source: https://xiaobot.net/post/cd710a3d-7a0f-4dce-92b2-74a2a61e7d9b
 - Opportunity: AI personal color analysis
 - Product: private browser-local color sampling and shopping palette generator
-- Planned production URL: https://colorfit.pagecheckai.com
+- Production URL: https://colorfit.pagecheckai.com
+- Fallback URL: https://colorfitai.pages.dev
+- Repository: https://github.com/JamesC-ai/colorfitai
 - Offers:
   - $19 Personal Palette Pack
   - $49 Wardrobe Color Review
 - Accuracy boundary: no identity, ethnicity, health, age, or attractiveness inference; lighting and camera processing can change results.
-- Status: implementation in progress
+- Product status:
+  - Browser-local photo sampling and quality checks live
+  - User-confirmable skin, hair, and eye reference points live
+  - Clothing, neutral, makeup, jewelry, and hair-color output live
+  - PNG export and copyable shopping list live
+  - 12 SEO pages plus privacy, terms, support, robots, and sitemap live
+  - Cloudflare custom domain active
+  - IndexNow submitted 16 URLs and returned 202 Accepted
+  - PayPal links pending
