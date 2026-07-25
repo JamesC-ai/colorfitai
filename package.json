@@ -1,0 +1,16 @@
+{
+  "name": "colorfitai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npx wrangler pages dev dist --compatibility-date=2026-07-25",
+    "test": "npm run build && node --test tests/site.test.mjs",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name colorfitai --branch main --commit-dirty=true",
+    "indexnow": "node scripts/submit-indexnow.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.114.0"
+  }
+}

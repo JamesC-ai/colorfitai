@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" translate="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="google" content="notranslate" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ColorFitAI - private personal color palette finder</title>
+    <meta name="description" content="Sample a selfie locally, confirm skin, hair, and eye colors, and create a practical clothing, makeup, jewelry, and hair-color palette." />
+    <link rel="canonical" href="https://colorfit.pagecheckai.com/" />
+    <meta property="og:title" content="ColorFitAI" />
+    <meta property="og:description" content="Turn a daylight selfie into a practical shopping color shortlist without uploading the photo." />
+    <meta property="og:image" content="https://colorfit.pagecheckai.com/color-studio.png" />
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="ColorFitAI home"><span class="brand-mark">C</span><span>ColorFitAI</span></a>
+      <nav aria-label="Primary"><a href="#analyzer">Analyzer</a><a href="#offers">Palette packs</a><a href="/support.html">Support</a></nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <img src="/color-studio.png" alt="A personal styling table with colorful fabric swatches, a mirror, and makeup palette" />
+        <div class="hero-shade"></div>
+        <div class="hero-copy">
+          <p class="eyebrow">Private color sampling</p>
+          <h1>Buy colors that earn their place in your closet.</h1>
+          <p>Use a daylight selfie to build a practical clothing and makeup shortlist. Your photo stays in this browser.</p>
+          <a class="primary-button" href="#analyzer">Find my palette</a>
+        </div>
+      </section>
+
+      <section class="analyzer" id="analyzer">
+        <div class="workflow-head">
+          <div><p class="eyebrow">Free color tool</p><h2>From selfie to shopping palette</h2></div>
+          <p>For the cleanest signal, use a front-facing photo in indirect daylight without filters or strong makeup.</p>
+        </div>
+
+        <div class="workspace">
+          <section class="photo-panel">
+            <div class="panel-title"><span>01</span><div><h3>Add a photo</h3><p id="photoStatus" aria-live="polite">No photo selected.</p></div></div>
+            <label class="upload-control">
+              <span>Choose JPEG, PNG, or WebP</span>
+              <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" />
+            </label>
+            <div class="canvas-shell">
+              <div id="emptyCanvas"><strong>Your selfie preview</strong><span>The image is processed locally and disappears when you close or refresh the page.</span></div>
+              <canvas id="photoCanvas" hidden></canvas>
+            </div>
+            <div class="quality" id="qualityDetails"><strong>Photo quality</strong><span>Waiting for a photo.</span></div>
+          </section>
+
+          <section class="sample-panel">
+            <div class="panel-title"><span>02</span><div><h3>Confirm the samples</h3><p>Select a label, then click its matching area in the photo.</p></div></div>
+            <div class="sample-list">
+              <button class="sample-button is-active" type="button" data-sample="skin">
+                <span class="swatch" id="skinSwatch"></span><span><strong>Skin reference</strong><small>#C28B70</small></span>
+              </button>
+              <button class="sample-button" type="button" data-sample="hair">
+                <span class="swatch" id="hairSwatch"></span><span><strong>Hair reference</strong><small>#432F28</small></span>
+              </button>
+              <button class="sample-button" type="button" data-sample="eyes">
+                <span class="swatch" id="eyeSwatch"></span><span><strong>Eye reference</strong><small>#534C43</small></span>
+              </button>
+            </div>
+            <div class="sampling-tip">
+              <strong>Sampling tip</strong>
+              <p>Choose a mid-tone cheek area, natural hair near the crown, and the colored iris. Avoid glare, deep shadow, white of the eye, dyed streaks, and background.</p>
+            </div>
+            <button class="primary-button full-width" id="analyzeButton" type="button" disabled>Build my color shortlist</button>
+            <button class="text-button" id="resetButton" type="button">Start over</button>
+          </section>
+        </div>
+
+        <section class="result-panel" id="resultPanel" hidden></section>
+        <div class="result-actions" id="resultActions" hidden>
+          <button class="secondary-button" id="exportButton" type="button">Download palette PNG</button>
+          <button class="secondary-button" id="copyButton" type="button">Copy shopping list</button>
+        </div>
+      </section>
+
+      <section class="boundary-band">
+        <div><p class="eyebrow">Accuracy boundary</p><h2>A visual shopping aid, not a verdict about you.</h2></div>
+        <p>ColorFitAI does not infer ethnicity, identity, health, age, or attractiveness. Camera processing and lighting can shift every sample. Treat the result as a shortlist and compare fabric near your face in daylight before buying.</p>
+      </section>
+
+      <section class="offer-band" id="offers">
+        <div><p class="eyebrow">Launch offers</p><h2>Keep the free tool. Add a human-ready pack when your wardrobe needs a plan.</h2></div>
+        <article>
+          <span class="price">$19</span><h3>Personal Palette Pack</h3>
+          <p>A printable palette, shopping checklist, outfit color formulas, and makeup reference sheet built from your confirmed samples.</p>
+          <span class="pending-link">PayPal link being connected</span>
+        </article>
+        <article>
+          <span class="price">$49</span><h3>Wardrobe Color Review</h3>
+          <p>A review of up to 12 customer-provided clothing photos, keep-or-rethink notes, and a practical gap list.</p>
+          <span class="pending-link">PayPal link being connected</span>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <span>ColorFitAI</span>
+      <span><a href="/privacy.html">Privacy</a> <a href="/terms.html">Terms</a> <a href="/support.html">Support</a> <a href="https://tools.pagecheckai.com">More tools</a></span>
+    </footer>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
