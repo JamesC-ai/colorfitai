@@ -7,8 +7,8 @@
 - Fallback URL: https://colorfitai.pages.dev
 - Repository: https://github.com/JamesC-ai/colorfitai
 - Offers:
-  - $19 Personal Palette Pack
-  - $49 Wardrobe Color Review
+  - $19 Personal Palette Pack: https://www.paypal.com/ncp/payment/7P6JNH86HJRNU
+  - $49 Wardrobe Color Review: https://www.paypal.com/ncp/payment/MXDJV5SYXTR9W
 - Accuracy boundary: no identity, ethnicity, health, age, or attractiveness inference; lighting and camera processing can change results.
 - Product status:
   - Browser-local photo sampling and quality checks live
@@ -18,4 +18,4 @@
   - 12 SEO pages plus privacy, terms, support, robots, and sitemap live
   - Cloudflare custom domain active
   - IndexNow submitted 16 URLs and returned 202 Accepted
-  - PayPal links pending
+  - Both PayPal payment links live

@@ -13,6 +13,8 @@ test("build includes the product, legal pages, and sitemap", async () => {
   ]);
   assert.match(home, /ColorFitAI/);
   assert.match(home, /photo stays in this browser/i);
+  assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/7P6JNH86HJRNU/);
+  assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
   assert.match(privacy, /not uploaded/i);
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
