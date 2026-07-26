@@ -86,6 +86,27 @@ const pages = [
     headline: "Compare lively warm color with grounded warm depth.",
     intent: "People whose warm undertone result needs a clearer decision between bright and deep color families.",
   },
+  {
+    slug: "eyeglass-frame-color-finder",
+    title: "Eyeglass frame color finder",
+    description: "Use a working personal palette to shortlist eyeglass frame colors, metals, transparency, and contrast before trying frames in person.",
+    headline: "Shortlist eyeglass frame colors before your next fitting.",
+    intent: "Glasses shoppers comparing neutral, colorful, metal, tortoiseshell, and translucent frame options near the face.",
+  },
+  {
+    slug: "workwear-color-palette",
+    title: "Workwear color palette",
+    description: "Build a coordinated workwear palette with dependable neutrals, shirts, layers, shoes, and repeatable accent colors.",
+    headline: "Give your work wardrobe a practical color system.",
+    intent: "Professionals planning office, hybrid, interview, or client-facing outfits with fewer color mismatches.",
+  },
+  {
+    slug: "wedding-guest-outfit-color-palette",
+    title: "Wedding guest outfit color palette",
+    description: "Create a personal shortlist for wedding guest clothing, accessories, makeup, and metal colors while respecting the event dress code.",
+    headline: "Choose wedding guest colors that fit you and the dress code.",
+    intent: "Wedding guests narrowing outfit colors without treating a seasonal palette as a rigid rule or ignoring host guidance.",
+  },
 ];
 
 function escapeHtml(value) {
