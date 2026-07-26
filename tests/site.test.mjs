@@ -19,6 +19,16 @@ const seoRoutes = [
   "eyeglass-frame-color-finder",
   "workwear-color-palette",
   "wedding-guest-outfit-color-palette",
+  "interview-outfit-color-palette",
+  "travel-capsule-wardrobe-colors",
+  "nail-polish-color-palette-finder",
+  "scarf-color-finder",
+  "handbag-shoe-color-palette",
+  "black-white-contrast-outfit-checker",
+  "closet-color-audit-checklist",
+  "online-shopping-color-checklist",
+  "mens-wardrobe-color-palette",
+  "bridesmaid-dress-color-palette",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -35,11 +45,13 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
   assert.match(home, /Eyeglass frames/);
   assert.match(home, /Wedding guest colors/);
+  assert.match(home, /Interview outfit/);
+  assert.match(home, /Online shopping/);
   assert.match(privacy, /not uploaded/i);
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 19);
+  assert.equal(sitemapUrls.length, 29);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
