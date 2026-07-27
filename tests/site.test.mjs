@@ -29,6 +29,16 @@ const seoRoutes = [
   "online-shopping-color-checklist",
   "mens-wardrobe-color-palette",
   "bridesmaid-dress-color-palette",
+  "mother-of-bride-outfit-color-palette",
+  "graduation-outfit-color-palette",
+  "holiday-party-outfit-color-palette",
+  "video-call-outfit-color-palette",
+  "red-lipstick-undertone-checker",
+  "neutral-wardrobe-color-palette",
+  "plus-size-outfit-color-palette",
+  "maternity-outfit-color-palette",
+  "thrift-shopping-color-checklist",
+  "jewelry-capsule-color-palette",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -47,14 +57,31 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /Wedding guest colors/);
   assert.match(home, /Interview outfit/);
   assert.match(home, /Online shopping/);
+  assert.match(home, /Video calls/);
+  assert.match(home, /Thrift shopping/);
+  assert.match(home, /Jewelry capsule/);
   assert.match(privacy, /not uploaded/i);
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 29);
+  assert.equal(sitemapUrls.length, 39);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
+});
+
+test("new shopping pages avoid identity and outcome claims", async () => {
+  const video = await readFile("dist/video-call-outfit-color-palette/index.html", "utf8");
+  const red = await readFile("dist/red-lipstick-undertone-checker/index.html", "utf8");
+  const plus = await readFile("dist/plus-size-outfit-color-palette/index.html", "utf8");
+  const maternity = await readFile("dist/maternity-outfit-color-palette/index.html", "utf8");
+  const combined = `${video}\n${red}\n${plus}\n${maternity}`;
+
+  assert.match(combined, /does not infer identity, ethnicity, health, age, or attractiveness/);
+  assert.match(combined, /Use the output to shortlist color families/);
+  assert.match(combined, /not to eliminate personal favorites/);
+  assert.match(combined, /compare the real fabric, makeup sample, or metal near your face before buying/i);
+  assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate/);
 });
 
 test("renders all shopping pages with privacy and accuracy boundaries", async () => {
