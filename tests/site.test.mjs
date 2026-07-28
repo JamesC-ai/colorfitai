@@ -59,6 +59,16 @@ const seoRoutes = [
   "color-analysis-before-shopping-checklist",
   "wardrobe-color-declutter-checklist",
   "makeup-bag-color-audit-checklist",
+  "teacher-wardrobe-color-palette",
+  "conference-capsule-color-checklist",
+  "date-night-color-checklist",
+  "job-fair-outfit-color-checklist",
+  "retail-uniform-color-coordination",
+  "stage-performance-outfit-color-plan",
+  "minimalist-wardrobe-color-ratio",
+  "seasonal-sale-color-shopping-checklist",
+  "outerwear-accessory-color-map",
+  "color-palette-after-weight-change",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -89,7 +99,7 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 59);
+  assert.equal(sitemapUrls.length, 69);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
@@ -135,6 +145,20 @@ test("second-pass shopping pages keep private reference and no-outcome boundarie
   assert.match(combined, /compare the real fabric, makeup sample, or metal near your face before buying/i);
   assert.match(declutter, /without letting a palette override personal favorites/);
   assert.match(makeup, /testing real formulas on skin/);
+  assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate|guaranteed slimming/);
+});
+
+test("third-pass wardrobe pages keep body, identity, and outcome boundaries", async () => {
+  const teacher = await readFile("dist/teacher-wardrobe-color-palette/index.html", "utf8");
+  const stage = await readFile("dist/stage-performance-outfit-color-plan/index.html", "utf8");
+  const sale = await readFile("dist/seasonal-sale-color-shopping-checklist/index.html", "utf8");
+  const weight = await readFile("dist/color-palette-after-weight-change/index.html", "utf8");
+  const combined = `${teacher}\n${stage}\n${sale}\n${weight}`;
+
+  assert.match(combined, /does not infer identity, ethnicity, health, age, or attractiveness/);
+  assert.match(combined, /Use the output to shortlist color families/);
+  assert.match(combined, /not to eliminate personal favorites/);
+  assert.match(weight, /without judgment/);
   assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate|guaranteed slimming/);
 });
 
