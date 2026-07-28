@@ -69,6 +69,16 @@ const seoRoutes = [
   "seasonal-sale-color-shopping-checklist",
   "outerwear-accessory-color-map",
   "color-palette-after-weight-change",
+  "remote-work-capsule-color-plan",
+  "vacation-capsule-color-palette",
+  "wedding-family-photo-color-plan",
+  "postpartum-wardrobe-color-checklist",
+  "silver-hair-wardrobe-color-checklist",
+  "glasses-frame-color-wardrobe-map",
+  "formal-event-color-checklist",
+  "small-closet-color-system",
+  "thrift-store-color-filter-checklist",
+  "makeup-and-wardrobe-color-handoff",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -99,7 +109,7 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 69);
+  assert.equal(sitemapUrls.length, 79);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
@@ -159,6 +169,23 @@ test("third-pass wardrobe pages keep body, identity, and outcome boundaries", as
   assert.match(combined, /Use the output to shortlist color families/);
   assert.match(combined, /not to eliminate personal favorites/);
   assert.match(weight, /without judgment/);
+  assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate|guaranteed slimming/);
+});
+
+test("fourth-pass wardrobe pages keep comfort, identity, and buying boundaries", async () => {
+  const remote = await readFile("dist/remote-work-capsule-color-plan/index.html", "utf8");
+  const postpartum = await readFile("dist/postpartum-wardrobe-color-checklist/index.html", "utf8");
+  const silver = await readFile("dist/silver-hair-wardrobe-color-checklist/index.html", "utf8");
+  const thrift = await readFile("dist/thrift-store-color-filter-checklist/index.html", "utf8");
+  const makeup = await readFile("dist/makeup-and-wardrobe-color-handoff/index.html", "utf8");
+  const combined = `${remote}\n${postpartum}\n${silver}\n${thrift}\n${makeup}`;
+
+  assert.match(combined, /does not infer identity, ethnicity, health, age, or attractiveness/);
+  assert.match(combined, /Use the output to shortlist color families/);
+  assert.match(combined, /not to eliminate personal favorites/);
+  assert.match(postpartum, /comfort first/);
+  assert.match(silver, /without age, attractiveness, or identity assumptions/);
+  assert.match(thrift, /avoiding pressure, scarcity, and unrealistic alterations/);
   assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate|guaranteed slimming/);
 });
 
