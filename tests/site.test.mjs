@@ -49,6 +49,16 @@ const seoRoutes = [
   "travel-photo-outfit-color-checklist",
   "presentation-outfit-color-checklist",
   "athleisure-color-palette-checklist",
+  "denim-wash-color-checklist",
+  "office-capsule-color-plan",
+  "family-photo-outfit-color-palette",
+  "concert-outfit-color-checklist",
+  "vacation-swimwear-color-checklist",
+  "handbag-hardware-metal-checklist",
+  "bridesmaid-accessory-color-checklist",
+  "color-analysis-before-shopping-checklist",
+  "wardrobe-color-declutter-checklist",
+  "makeup-bag-color-audit-checklist",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -79,7 +89,7 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 49);
+  assert.equal(sitemapUrls.length, 59);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
@@ -109,6 +119,23 @@ test("renders all shopping pages with privacy and accuracy boundaries", async ()
     assert.match(html, /compare the real fabric, makeup sample, or metal near your face before buying/i);
     assert.match(html, /does not infer identity, ethnicity, health, age, or attractiveness/);
   }
+});
+
+test("second-pass shopping pages keep private reference and no-outcome boundaries", async () => {
+  const denim = await readFile("dist/denim-wash-color-checklist/index.html", "utf8");
+  const family = await readFile("dist/family-photo-outfit-color-palette/index.html", "utf8");
+  const swimwear = await readFile("dist/vacation-swimwear-color-checklist/index.html", "utf8");
+  const declutter = await readFile("dist/wardrobe-color-declutter-checklist/index.html", "utf8");
+  const makeup = await readFile("dist/makeup-bag-color-audit-checklist/index.html", "utf8");
+  const combined = `${denim}\n${family}\n${swimwear}\n${declutter}\n${makeup}`;
+
+  assert.match(combined, /does not infer identity, ethnicity, health, age, or attractiveness/);
+  assert.match(combined, /Use the output to shortlist color families/);
+  assert.match(combined, /not to eliminate personal favorites/);
+  assert.match(combined, /compare the real fabric, makeup sample, or metal near your face before buying/i);
+  assert.match(declutter, /without letting a palette override personal favorites/);
+  assert.match(makeup, /testing real formulas on skin/);
+  assert.doesNotMatch(combined.toLowerCase(), /guaranteed flattering|beauty score|ethnicity detection|health diagnosis|age estimate|guaranteed slimming/);
 });
 
 test("hosts the IndexNow key and visual asset", async () => {
