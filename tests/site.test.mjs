@@ -39,6 +39,16 @@ const seoRoutes = [
   "maternity-outfit-color-palette",
   "thrift-shopping-color-checklist",
   "jewelry-capsule-color-palette",
+  "winter-coat-color-checklist",
+  "summer-wedding-guest-color-checklist",
+  "job-interview-blazer-color-checklist",
+  "capsule-wardrobe-accent-color-checklist",
+  "hair-color-wardrobe-checklist",
+  "foundation-undertone-shopping-checklist",
+  "shoe-and-bag-color-checklist",
+  "travel-photo-outfit-color-checklist",
+  "presentation-outfit-color-checklist",
+  "athleisure-color-palette-checklist",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -60,11 +70,16 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /Video calls/);
   assert.match(home, /Thrift shopping/);
   assert.match(home, /Jewelry capsule/);
+  assert.match(home, /Winter coats/);
+  assert.match(home, /Summer weddings/);
+  assert.match(home, /Interview blazers/);
+  assert.match(home, /Foundation undertones/);
+  assert.match(home, /Presentation outfit/);
   assert.match(privacy, /not uploaded/i);
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 39);
+  assert.equal(sitemapUrls.length, 49);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
@@ -75,7 +90,9 @@ test("new shopping pages avoid identity and outcome claims", async () => {
   const red = await readFile("dist/red-lipstick-undertone-checker/index.html", "utf8");
   const plus = await readFile("dist/plus-size-outfit-color-palette/index.html", "utf8");
   const maternity = await readFile("dist/maternity-outfit-color-palette/index.html", "utf8");
-  const combined = `${video}\n${red}\n${plus}\n${maternity}`;
+  const foundation = await readFile("dist/foundation-undertone-shopping-checklist/index.html", "utf8");
+  const presentation = await readFile("dist/presentation-outfit-color-checklist/index.html", "utf8");
+  const combined = `${video}\n${red}\n${plus}\n${maternity}\n${foundation}\n${presentation}`;
 
   assert.match(combined, /does not infer identity, ethnicity, health, age, or attractiveness/);
   assert.match(combined, /Use the output to shortlist color families/);
