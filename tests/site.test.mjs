@@ -91,8 +91,12 @@ test("build includes the product, legal pages, and sitemap", async () => {
   ]);
   assert.match(home, /ColorFitAI/);
   assert.match(home, /photo stays in this browser/i);
+  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitai/);
+  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitwardrobe/);
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/7P6JNH86HJRNU/);
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
+  assert.match(home, /Enter a CP- or CW- code/);
+  assert.match(home, /sends only the activation code and product name/);
   assert.match(home, /Eyeglass frames/);
   assert.match(home, /Wedding guest colors/);
   assert.match(home, /Interview outfit/);
@@ -108,11 +112,26 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(privacy, /not uploaded/i);
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
+  assert.match(support, /generated locally from the palette result/);
+  assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
+  assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.equal(sitemapUrls.length, 79);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
+});
+
+test("paid pack activation stays product-scoped and browser-local", async () => {
+  const app = await readFile("dist/app.js", "utf8");
+
+  assert.match(app, /LICENSE_VERIFY_URL = "https:\/\/namebatch\.pagecheckai\.com\/api\/licenses\/verify"/);
+  assert.match(app, /product: "colorfitai"/);
+  assert.match(app, /product: "colorfitwardrobe"/);
+  assert.match(app, /entitlement: "personal_palette_pack"/);
+  assert.match(app, /entitlement: "wardrobe_color_review_pack"/);
+  assert.match(app, /JSON\.stringify\(\{ code, product: product\.product \}\)/);
+  assert.match(app, /Generated locally in this browser/);
 });
 
 test("new shopping pages avoid identity and outcome claims", async () => {

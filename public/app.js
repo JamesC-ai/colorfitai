@@ -17,12 +17,21 @@ const resetButton = document.querySelector("#resetButton");
 const resultPanel = document.querySelector("#resultPanel");
 const exportButton = document.querySelector("#exportButton");
 const copyButton = document.querySelector("#copyButton");
+const proCode = document.querySelector("#proCode");
+const proStatus = document.querySelector("#proStatus");
+const activatePack = document.querySelector("#activatePack");
+const downloadPack = document.querySelector("#downloadPack");
+
+const LICENSE_VERIFY_URL = "https://namebatch.pagecheckai.com/api/licenses/verify";
+const STORAGE_KEY = "colorfitai-paid-code";
 
 let sourceImage = null;
 let sourceUrl = "";
 let photoStats = null;
 let activeSample = "skin";
 let result = null;
+let paidPackActive = false;
+let paidPackEntitlement = "";
 let samples = {
   skin: { r: 194, g: 139, b: 112, x: 0.5, y: 0.5 },
   hair: { r: 67, g: 47, b: 40, x: 0.5, y: 0.24 },
@@ -163,6 +172,120 @@ function resultText() {
   ].join("\n");
 }
 
+function currentSampleText() {
+  return Object.entries(samples)
+    .map(([label, sample]) => `${label}: ${rgbToHex(sample)}`)
+    .join("\n");
+}
+
+function paidPackText() {
+  const paletteText = resultText();
+  const packName = paidPackEntitlement === "wardrobe_color_review_pack"
+    ? "Wardrobe Color Review"
+    : "Personal Palette Pack";
+  const wardrobeSection = paidPackEntitlement === "wardrobe_color_review_pack"
+    ? [
+        "Wardrobe review workbook",
+        "- Review up to 12 outfit or clothing photos on your own device.",
+        "- Mark each item as keep, retest in daylight, tailor/style differently, or pause before replacing.",
+        "- Note where color concerns are really fit, fabric, lighting, occasion, comfort, or styling concerns.",
+        "- Build a gap list only after checking existing outfits and return policies.",
+        "",
+      ].join("\n")
+    : [
+        "Shopping checklist",
+        "- Put the reliable neutrals first and add one accent color at a time.",
+        "- Test fabric, makeup, and metal near your face in daylight before buying.",
+        "- Keep favorites that work for your life even when they sit outside the palette.",
+        "- Use product photos only as a starting point; dyes, screens, and lighting vary.",
+        "",
+      ].join("\n");
+
+  return [
+    `ColorFitAI paid download: ${packName}`,
+    "Generated locally in this browser from the current palette result. The license check sends only an activation code and product name. Your photo, sampled colors, palette result, and wardrobe notes stay on this device unless you choose to share them.",
+    "",
+    "Confirmed samples",
+    currentSampleText(),
+    "",
+    paletteText,
+    "",
+    wardrobeSection,
+    "Boundaries",
+    "- This is a practical color-shopping aid, not a professional certification.",
+    "- It does not infer identity, ethnicity, health, age, body value, or attractiveness.",
+    "- It does not guarantee that a color will flatter, fit, photograph well, sell, rank, or create revenue.",
+    "- Compare real items in suitable light and follow merchant return policies before buying.",
+  ].join("\n");
+}
+
+function updatePaidDownloadState(message) {
+  if (downloadPack) downloadPack.disabled = !paidPackActive || !result;
+  if (proStatus && message) proStatus.textContent = message;
+}
+
+function setPaidPackActive(active, message, entitlement = "") {
+  paidPackActive = active;
+  paidPackEntitlement = active ? entitlement : "";
+  updatePaidDownloadState(message);
+}
+
+function productFromCode(rawCode) {
+  const code = rawCode.trim().toUpperCase();
+  if (code.startsWith("CP-")) return { product: "colorfitai", entitlement: "personal_palette_pack" };
+  if (code.startsWith("CW-")) return { product: "colorfitwardrobe", entitlement: "wardrobe_color_review_pack" };
+  return null;
+}
+
+async function verifyPaidPackCode(rawCode, { quiet = false } = {}) {
+  const code = rawCode.trim().toUpperCase();
+  const product = productFromCode(code);
+  if (!product) {
+    setPaidPackActive(false, quiet ? "Enter a valid CP- or CW- code to unlock a color pack." : "That activation code format is not valid.");
+    return false;
+  }
+  if (!quiet) proStatus.textContent = "Checking activation code...";
+  try {
+    const response = await fetch(LICENSE_VERIFY_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code, product: product.product }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.valid || data.entitlement !== product.entitlement) {
+      setPaidPackActive(false, "That activation code was not accepted for this ColorFitAI pack.");
+      return false;
+    }
+    localStorage.setItem(STORAGE_KEY, code);
+    const ready = result ? "Activation verified. Download your paid pack when ready." : "Activation verified. Build a palette, then download your paid pack.";
+    setPaidPackActive(true, quiet ? ready : ready, product.entitlement);
+    return true;
+  } catch {
+    setPaidPackActive(false, "Could not reach the license service. Try again, or use support with your PayPal receipt.");
+    return false;
+  }
+}
+
+function downloadPaidPack() {
+  if (!paidPackActive) {
+    setPaidPackActive(false, "Activate a color pack before downloading.");
+    return;
+  }
+  if (!result) {
+    updatePaidDownloadState("Build a palette before downloading the paid pack.");
+    return;
+  }
+  const blob = new Blob([paidPackText()], { type: "text/plain;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = paidPackEntitlement === "wardrobe_color_review_pack"
+    ? "colorfitai-wardrobe-color-review.txt"
+    : "colorfitai-personal-palette-pack.txt";
+  link.click();
+  URL.revokeObjectURL(link.href);
+  updatePaidDownloadState("Paid pack downloaded locally.");
+}
+
 function renderResult() {
   result = analyzePalette(samples, photoStats?.quality ?? 60);
   resultPanel.hidden = false;
@@ -205,6 +328,7 @@ function renderResult() {
     <div class="boundary-note"><strong>Use this as a shortlist, not a rule.</strong> Lighting, camera processing, makeup, hair dye, and sample placement can change the result. Compare colors near your face in daylight before buying.</div>
   `;
   document.querySelector("#resultActions").hidden = false;
+  updatePaidDownloadState(paidPackActive ? "Palette ready. Download your paid pack when ready." : "Palette ready. Enter a CP- or CW- code to unlock a paid pack.");
   resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -276,6 +400,7 @@ resetButton.addEventListener("click", () => {
   analyzeButton.disabled = true;
   sourceImage = null;
   result = null;
+  updatePaidDownloadState(paidPackActive ? "Build a palette before downloading the paid pack." : "Build a palette, then enter the code from your PayPal confirmation.");
 });
 exportButton.addEventListener("click", exportPalette);
 copyButton.addEventListener("click", async () => {
@@ -285,3 +410,11 @@ copyButton.addEventListener("click", async () => {
     copyButton.textContent = "Copy shopping list";
   }, 1200);
 });
+activatePack?.addEventListener("click", () => verifyPaidPackCode(proCode.value));
+downloadPack?.addEventListener("click", downloadPaidPack);
+
+const savedCode = localStorage.getItem(STORAGE_KEY);
+if (savedCode) {
+  proCode.value = savedCode;
+  verifyPaidPackCode(savedCode, { quiet: true });
+}
