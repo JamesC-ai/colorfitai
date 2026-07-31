@@ -90,13 +90,34 @@
         <article>
           <span class="price">$19</span><h3>Personal Palette Pack</h3>
           <p>A printable palette, shopping checklist, outfit color formulas, and makeup reference sheet built from your confirmed samples.</p>
-          <a class="primary-button" href="https://www.paypal.com/ncp/payment/7P6JNH86HJRNU">Buy Personal Palette Pack</a>
+          <a class="primary-button" href="https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&amp;product=colorfitai">Buy Personal Palette Pack</a>
+          <p class="fallback-note">PayPal fallback: <a href="https://www.paypal.com/ncp/payment/7P6JNH86HJRNU">7P6JNH86HJRNU</a></p>
         </article>
         <article>
           <span class="price">$49</span><h3>Wardrobe Color Review</h3>
-          <p>A review of up to 12 customer-provided clothing photos, keep-or-rethink notes, and a practical gap list.</p>
-          <a class="primary-button" href="https://www.paypal.com/ncp/payment/MXDJV5SYXTR9W">Buy Wardrobe Color Review</a>
+          <p>A browser-local review workbook for up to 12 outfit photos, keep-or-rethink notes, outfit formulas, and a practical gap-list template.</p>
+          <a class="primary-button" href="https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&amp;product=colorfitwardrobe">Buy Wardrobe Color Review</a>
+          <p class="fallback-note">PayPal fallback: <a href="https://www.paypal.com/ncp/payment/MXDJV5SYXTR9W">MXDJV5SYXTR9W</a></p>
         </article>
+      </section>
+
+      <section class="activation-band" aria-label="Paid color pack activation">
+        <div>
+          <p class="eyebrow">Paid download</p>
+          <h2>Enter a CP- or CW- code to download the paid color pack.</h2>
+          <p>The license check sends only the activation code and product name. Your photo, sampled colors, palette result, and wardrobe notes stay in this browser unless you choose to share them.</p>
+        </div>
+        <div class="activation-panel">
+          <label>
+            Activation code
+            <input id="proCode" type="text" autocomplete="off" placeholder="CP- or CW-XXXX-XXXX-XXXX-XXXX" />
+          </label>
+          <div class="activation-actions">
+            <button class="primary-button" id="activatePack" type="button">Activate</button>
+            <button class="secondary-button" id="downloadPack" type="button" disabled>Download paid pack</button>
+          </div>
+          <p id="proStatus" aria-live="polite">Build a palette, then enter the code from your PayPal confirmation.</p>
+        </div>
       </section>
 
       <section class="guide-band" aria-label="Personal color shopping guides">
