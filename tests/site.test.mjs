@@ -90,6 +90,14 @@ test("build includes the product, legal pages, and sitemap", async () => {
     readFile("dist/sitemap.xml", "utf8"),
   ]);
   assert.match(home, /ColorFitAI/);
+  assert.match(home, /Build a free color shortlist before buying another maybe/);
+  assert.match(home, /Build free palette/);
+  assert.match(home, /Compare \$19 and \$49 packs/);
+  assert.match(home, /Free shortlist first/);
+  assert.match(home, /Buy after the free palette exposes a costly repeat pattern/);
+  assert.match(home, /Good fit for \$19/);
+  assert.match(home, /Good fit for \$49/);
+  assert.match(home, /Skip payment when/);
   assert.match(home, /photo stays in this browser/i);
   assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitai/);
   assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitwardrobe/);
@@ -155,6 +163,9 @@ test("renders all shopping pages with privacy and accuracy boundaries", async ()
     const html = await readFile(`dist/${route}/index.html`, "utf8");
     assert.match(html, /ColorFitAI/);
     assert.match(html, /Confirm the cheek, natural hair, and iris sample points yourself/);
+    assert.match(html, /When a paid palette pack is worth it/);
+    assert.match(html, /Buy the \$19 Personal Palette Pack only when/);
+    assert.match(html, /Skip payment if you need an appearance rating/);
     assert.match(html, /compare the real fabric, makeup sample, or metal near your face before buying/i);
     assert.match(html, /does not infer identity, ethnicity, health, age, or attractiveness/);
   }

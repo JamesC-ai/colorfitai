@@ -568,6 +568,8 @@ function pageHtml(page) {
         <li>Compare the real fabric, makeup sample, or metal near your face before buying.</li>
       </ol>
       <p><a class="primary-button" href="/#analyzer">Build a free palette</a></p>
+      <h2>When a paid palette pack is worth it</h2>
+      <p>Use the free palette first. Buy the $19 Personal Palette Pack only when it exposes a real shopping pattern and you want a printable palette, makeup notes, outfit formulas, and a checklist before buying. Choose the $49 Wardrobe Color Review only when you need a browser-local outfit-photo review workbook and a wardrobe gap list. Skip payment if you need an appearance rating, body judgment, identity guess, professional styling, cosmetic safety advice, product fit guarantee, or guaranteed result.</p>
       <h2>Accuracy boundary</h2>
       <p>Camera white balance, screen calibration, makeup, hair dye, reflected wall color, and sample placement can change the result. ColorFitAI does not infer identity, ethnicity, health, age, or attractiveness.</p>
       <p><a href="/support.html">Support</a> · <a href="https://tools.pagecheckai.com">More PageCheckAI tools</a></p>
