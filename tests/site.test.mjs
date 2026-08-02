@@ -104,6 +104,8 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/7P6JNH86HJRNU/);
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
   assert.match(home, /Enter a CP- or CW- code/);
+  assert.match(home, /After payment, enter the CP- or CW- activation code here/);
+  assert.match(home, /open support/);
   assert.match(home, /sends only the activation code and product name/);
   assert.match(home, /Eyeglass frames/);
   assert.match(home, /Wedding guest colors/);
