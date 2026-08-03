@@ -99,8 +99,8 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /Good fit for \$49/);
   assert.match(home, /Skip payment when/);
   assert.match(home, /photo stays in this browser/i);
-  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitai/);
-  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitwardrobe/);
+  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_palette/);
+  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_wardrobe/);
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/7P6JNH86HJRNU/);
   assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
   assert.match(home, /Enter a CP- or CW- code/);
@@ -123,6 +123,8 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   assert.match(support, /generated locally from the palette result/);
+  assert.match(support, /product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=support_palette/);
+  assert.match(support, /product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=support_wardrobe/);
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
@@ -170,6 +172,8 @@ test("renders all shopping pages with privacy and accuracy boundaries", async ()
     assert.match(html, /Skip payment if you need an appearance rating/);
     assert.match(html, /compare the real fabric, makeup sample, or metal near your face before buying/i);
     assert.match(html, /does not infer identity, ethnicity, health, age, or attractiveness/);
+    assert.match(html, new RegExp(`product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=seo_${route}_palette`));
+    assert.match(html, new RegExp(`product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=seo_${route}_wardrobe`));
   }
 });
 

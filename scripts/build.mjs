@@ -1,6 +1,18 @@
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 
 const siteUrl = "https://colorfit.pagecheckai.com";
+const palettePaymentUrl = "https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&product=colorfitai";
+const wardrobePaymentUrl = "https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&product=colorfitwardrobe";
+
+function checkoutUrlFor(paymentUrl, content) {
+  const url = new URL(paymentUrl);
+  url.searchParams.set("utm_source", "colorfitai");
+  url.searchParams.set("utm_medium", "owned");
+  url.searchParams.set("utm_campaign", "conversion");
+  url.searchParams.set("utm_content", content);
+  return url.toString().replaceAll("&", "&amp;");
+}
+
 const pages = [
   {
     slug: "personal-color-analysis-online",
@@ -568,6 +580,10 @@ function pageHtml(page) {
         <li>Compare the real fabric, makeup sample, or metal near your face before buying.</li>
       </ol>
       <p><a class="primary-button" href="/#analyzer">Build a free palette</a></p>
+      <p>
+        <a class="primary-button" href="${checkoutUrlFor(palettePaymentUrl, `seo_${page.slug}_palette`)}">Buy $19 Personal Palette Pack</a>
+        <a class="secondary-button" href="${checkoutUrlFor(wardrobePaymentUrl, `seo_${page.slug}_wardrobe`)}">Buy $49 Wardrobe Review</a>
+      </p>
       <h2>When a paid palette pack is worth it</h2>
       <p>Use the free palette first. Buy the $19 Personal Palette Pack only when it exposes a real shopping pattern and you want a printable palette, makeup notes, outfit formulas, and a checklist before buying. Choose the $49 Wardrobe Color Review only when you need a browser-local outfit-photo review workbook and a wardrobe gap list. Skip payment if you need an appearance rating, body judgment, identity guess, professional styling, cosmetic safety advice, product fit guarantee, or guaranteed result.</p>
       <h2>Accuracy boundary</h2>
