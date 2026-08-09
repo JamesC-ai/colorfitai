@@ -144,6 +144,11 @@ test("paid pack activation stays product-scoped and browser-local", async () => 
   assert.match(app, /entitlement: "wardrobe_color_review_pack"/);
   assert.match(app, /JSON\.stringify\(\{ code, product: product\.product \}\)/);
   assert.match(app, /Generated locally in this browser/);
+  assert.match(app, /function invalidateResult/);
+  assert.match(app, /Palette inputs changed\. Analyze again before downloading the paid pack/);
+  assert.match(app, /sample changed\. Analyze again before exporting/);
+  assert.match(app, /if \(sourceUrl\) URL\.revokeObjectURL\(sourceUrl\)/);
+  assert.match(app, /photoStats = null/);
 });
 
 test("new shopping pages avoid identity and outcome claims", async () => {

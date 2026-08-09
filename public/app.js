@@ -126,6 +126,7 @@ async function loadPhoto(file) {
     photoStatus.textContent = "Choose an image smaller than 12 MB.";
     return;
   }
+  invalidateResult("Loading a new photo. Analyze again after confirming the sample points.");
   if (sourceUrl) URL.revokeObjectURL(sourceUrl);
   sourceUrl = URL.createObjectURL(file);
   sourceImage = new Image();
@@ -222,6 +223,14 @@ function paidPackText() {
 function updatePaidDownloadState(message) {
   if (downloadPack) downloadPack.disabled = !paidPackActive || !result;
   if (proStatus && message) proStatus.textContent = message;
+}
+
+function invalidateResult(message) {
+  result = null;
+  resultPanel.hidden = true;
+  document.querySelector("#resultActions").hidden = true;
+  updatePaidDownloadState(paidPackActive ? "Palette inputs changed. Analyze again before downloading the paid pack." : "Palette inputs changed. Analyze again before exporting.");
+  if (message) photoStatus.textContent = message;
 }
 
 function setPaidPackActive(active, message, entitlement = "") {
@@ -387,6 +396,7 @@ canvas.addEventListener("click", (event) => {
   context.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
   samples[activeSample] = { ...sampleRegion(x, y), x: x / canvas.width, y: y / canvas.height };
   updateSampleDisplay();
+  invalidateResult(`${activeSample[0].toUpperCase()}${activeSample.slice(1)} sample changed. Analyze again before exporting.`);
 });
 analyzeButton.addEventListener("click", renderResult);
 resetButton.addEventListener("click", () => {
@@ -398,8 +408,11 @@ resetButton.addEventListener("click", () => {
   qualityDetails.innerHTML = "<strong>Photo quality</strong><span>Waiting for a photo.</span>";
   photoStatus.textContent = "No photo selected.";
   analyzeButton.disabled = true;
+  if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+  sourceUrl = "";
   sourceImage = null;
-  result = null;
+  photoStats = null;
+  invalidateResult();
   updatePaidDownloadState(paidPackActive ? "Build a palette before downloading the paid pack." : "Build a palette, then enter the code from your PayPal confirmation.");
 });
 exportButton.addEventListener("click", exportPalette);
