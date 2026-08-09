@@ -149,6 +149,10 @@ test("paid pack activation stays product-scoped and browser-local", async () => 
   assert.match(app, /sample changed\. Analyze again before exporting/);
   assert.match(app, /if \(sourceUrl\) URL\.revokeObjectURL\(sourceUrl\)/);
   assert.match(app, /photoStats = null/);
+  assert.match(app, /MIN_PAID_PHOTO_QUALITY = 70/);
+  assert.match(app, /photoStats\.quality >= MIN_PAID_PHOTO_QUALITY/);
+  assert.match(app, /Paid downloads require photo quality \$\{MIN_PAID_PHOTO_QUALITY\}\/100 or higher/);
+  assert.match(app, /Photo quality: \$\{photoStats\.quality\}\/100/);
 });
 
 test("new shopping pages avoid identity and outcome claims", async () => {

@@ -24,6 +24,7 @@ const downloadPack = document.querySelector("#downloadPack");
 
 const LICENSE_VERIFY_URL = "https://namebatch.pagecheckai.com/api/licenses/verify";
 const STORAGE_KEY = "colorfitai-paid-code";
+const MIN_PAID_PHOTO_QUALITY = 70;
 
 let sourceImage = null;
 let sourceUrl = "";
@@ -209,6 +210,9 @@ function paidPackText() {
     "Confirmed samples",
     currentSampleText(),
     "",
+    `Photo quality: ${photoStats.quality}/100`,
+    `Photo quality notes: ${photoStats.warnings.join(" ") || "No automatic lighting warning."}`,
+    "",
     paletteText,
     "",
     wardrobeSection,
@@ -221,7 +225,8 @@ function paidPackText() {
 }
 
 function updatePaidDownloadState(message) {
-  if (downloadPack) downloadPack.disabled = !paidPackActive || !result;
+  const paidPhotoReady = Boolean(photoStats) && photoStats.quality >= MIN_PAID_PHOTO_QUALITY;
+  if (downloadPack) downloadPack.disabled = !paidPackActive || !result || !paidPhotoReady;
   if (proStatus && message) proStatus.textContent = message;
 }
 
@@ -266,7 +271,12 @@ async function verifyPaidPackCode(rawCode, { quiet = false } = {}) {
       return false;
     }
     localStorage.setItem(STORAGE_KEY, code);
-    const ready = result ? "Activation verified. Download your paid pack when ready." : "Activation verified. Build a palette, then download your paid pack.";
+    const paidPhotoReady = Boolean(photoStats) && photoStats.quality >= MIN_PAID_PHOTO_QUALITY;
+    const ready = result
+      ? (paidPhotoReady
+          ? "Activation verified. Download your paid pack when ready."
+          : `Activation verified. Retake the photo in more even light; paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`)
+      : "Activation verified. Build a palette, then download your paid pack.";
     setPaidPackActive(true, quiet ? ready : ready, product.entitlement);
     return true;
   } catch {
@@ -282,6 +292,10 @@ function downloadPaidPack() {
   }
   if (!result) {
     updatePaidDownloadState("Build a palette before downloading the paid pack.");
+    return;
+  }
+  if (!photoStats || photoStats.quality < MIN_PAID_PHOTO_QUALITY) {
+    updatePaidDownloadState(`Retake the photo in more even light. Paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`);
     return;
   }
   const blob = new Blob([paidPackText()], { type: "text/plain;charset=utf-8" });
@@ -337,7 +351,11 @@ function renderResult() {
     <div class="boundary-note"><strong>Use this as a shortlist, not a rule.</strong> Lighting, camera processing, makeup, hair dye, and sample placement can change the result. Compare colors near your face in daylight before buying.</div>
   `;
   document.querySelector("#resultActions").hidden = false;
-  updatePaidDownloadState(paidPackActive ? "Palette ready. Download your paid pack when ready." : "Palette ready. Enter a CP- or CW- code to unlock a paid pack.");
+  const paidReady = photoStats && photoStats.quality >= MIN_PAID_PHOTO_QUALITY;
+  const readyMessage = paidReady
+    ? (paidPackActive ? "Palette ready. Download your paid pack when ready." : "Palette ready. Enter a CP- or CW- code to unlock a paid pack.")
+    : `Free palette ready. Retake the photo in more even light before buying; paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`;
+  updatePaidDownloadState(readyMessage);
   resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
