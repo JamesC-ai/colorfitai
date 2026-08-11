@@ -128,7 +128,7 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   assert.match(support, /generated locally from the palette result/);
-  assert.match(support, /Build the free current palette before payment/);
+  assert.match(support, /Prepare the free current palette report before payment/);
   assert.match(support, /Prepare the free current palette/);
   assert.doesNotMatch(support, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/);
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
