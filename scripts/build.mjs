@@ -1,17 +1,6 @@
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 
 const siteUrl = "https://colorfit.pagecheckai.com";
-const palettePaymentUrl = "https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&product=colorfitai";
-const wardrobePaymentUrl = "https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&product=colorfitwardrobe";
-
-function checkoutUrlFor(paymentUrl, content) {
-  const url = new URL(paymentUrl);
-  url.searchParams.set("utm_source", "colorfitai");
-  url.searchParams.set("utm_medium", "owned");
-  url.searchParams.set("utm_campaign", "conversion");
-  url.searchParams.set("utm_content", content);
-  return url.toString().replaceAll("&", "&amp;");
-}
 
 const pages = [
   {
@@ -579,13 +568,9 @@ function pageHtml(page) {
         <li>Use the output to shortlist color families, not to eliminate personal favorites.</li>
         <li>Compare the real fabric, makeup sample, or metal near your face before buying.</li>
       </ol>
-      <p><a class="primary-button" href="/#analyzer">Build a free palette</a></p>
-      <p>
-        <a class="primary-button" href="${checkoutUrlFor(palettePaymentUrl, `seo_${page.slug}_palette`)}">Buy $19 Personal Palette Pack</a>
-        <a class="secondary-button" href="${checkoutUrlFor(wardrobePaymentUrl, `seo_${page.slug}_wardrobe`)}">Buy $49 Wardrobe Review</a>
-      </p>
+      <p><a class="primary-button" href="/?utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=seo_${page.slug}_free_palette#analyzer">Build a free current palette</a></p>
       <h2>When a paid palette pack is worth it</h2>
-      <p>Use the free palette first. Buy the $19 Personal Palette Pack only when it exposes a real shopping pattern and you want a printable palette, makeup notes, outfit formulas, and a checklist before buying. Choose the $49 Wardrobe Color Review only when you need a browser-local outfit-photo review workbook and a wardrobe gap list. Skip payment if you need an appearance rating, body judgment, identity guess, professional styling, cosmetic safety advice, product fit guarantee, or guaranteed result.</p>
+      <p>Use the free current palette first. Review paid-pack boundaries in the analyzer only after the current photo, capture conditions, sample points, shopping decision, and limitations have been checked by a named person. The $49 option also needs a defined wardrobe-review scope. Skip payment if you need an appearance rating, body judgment, identity guess, professional styling, cosmetic safety advice, product fit guarantee, or guaranteed result.</p>
       <h2>Accuracy boundary</h2>
       <p>Camera white balance, screen calibration, makeup, hair dye, reflected wall color, and sample placement can change the result. ColorFitAI does not infer identity, ethnicity, health, age, or attractiveness.</p>
       <p><a href="/support.html">Support</a> · <a href="https://tools.pagecheckai.com">More PageCheckAI tools</a></p>

@@ -21,16 +21,34 @@ const proCode = document.querySelector("#proCode");
 const proStatus = document.querySelector("#proStatus");
 const activatePack = document.querySelector("#activatePack");
 const downloadPack = document.querySelector("#downloadPack");
+const reviewForm = document.querySelector("#reviewForm");
+const photoSource = document.querySelector("#photoSource");
+const photoCheckedDate = document.querySelector("#photoCheckedDate");
+const humanReviewer = document.querySelector("#humanReviewer");
+const shoppingDecision = document.querySelector("#shoppingDecision");
+const reviewNotes = document.querySelector("#reviewNotes");
+const wardrobeScope = document.querySelector("#wardrobeScope");
+const reviewConfirmed = document.querySelector("#reviewConfirmed");
+const paymentStatus = document.querySelector("#paymentStatus");
+const checkoutPalette = document.querySelector("#checkoutPalette");
+const paypalPalette = document.querySelector("#paypalPalette");
+const checkoutWardrobe = document.querySelector("#checkoutWardrobe");
+const paypalWardrobe = document.querySelector("#paypalWardrobe");
 
 const LICENSE_VERIFY_URL = "https://namebatch.pagecheckai.com/api/licenses/verify";
 const STORAGE_KEY = "colorfitai-paid-code";
 const MIN_PAID_PHOTO_QUALITY = 70;
+const CHECKOUT_BASE = "https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731";
+const PAYPAL_PALETTE_URL = "https://www.paypal.com/ncp/payment/7P6JNH86HJRNU";
+const PAYPAL_WARDROBE_URL = "https://www.paypal.com/ncp/payment/MXDJV5SYXTR9W";
 
 let sourceImage = null;
 let sourceUrl = "";
 let photoStats = null;
 let activeSample = "skin";
 let result = null;
+let resultSignature = "";
+let photoFingerprint = "";
 let paidPackActive = false;
 let paidPackEntitlement = "";
 let samples = {
@@ -46,6 +64,71 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function checkoutUrl(product, content) {
+  const url = new URL(CHECKOUT_BASE);
+  url.searchParams.set("product", product);
+  url.searchParams.set("utm_source", "colorfitai");
+  url.searchParams.set("utm_medium", "owned");
+  url.searchParams.set("utm_campaign", "conversion");
+  url.searchParams.set("utm_content", content);
+  return url.toString();
+}
+
+function setLinkState(link, href) {
+  if (href) {
+    link.href = href;
+    link.setAttribute("aria-disabled", "false");
+    return;
+  }
+  link.removeAttribute("href");
+  link.setAttribute("aria-disabled", "true");
+}
+
+function currentPaletteSignature() {
+  return JSON.stringify({
+    photoFingerprint,
+    samples,
+    photoSource: photoSource.value.trim(),
+    photoCheckedDate: photoCheckedDate.value,
+    humanReviewer: humanReviewer.value.trim(),
+    shoppingDecision: shoppingDecision.value.trim(),
+    reviewNotes: reviewNotes.value.trim(),
+    wardrobeScope: wardrobeScope.value.trim(),
+    reviewConfirmed: reviewConfirmed.checked,
+  });
+}
+
+function resultIsCurrent() {
+  return Boolean(result) && resultSignature === currentPaletteSignature();
+}
+
+function wardrobeScopeReady() {
+  return wardrobeScope.value.trim().length >= 40;
+}
+
+function qualifiedPaletteReady() {
+  const today = new Date().toISOString().slice(0, 10);
+  return resultIsCurrent()
+    && Boolean(photoStats)
+    && photoStats.quality >= MIN_PAID_PHOTO_QUALITY
+    && reviewForm.checkValidity()
+    && photoCheckedDate.value <= today;
+}
+
+function updatePaymentGate() {
+  const paletteReady = qualifiedPaletteReady();
+  const wardrobeReady = paletteReady && wardrobeScopeReady();
+  setLinkState(checkoutPalette, paletteReady ? checkoutUrl("colorfitai", "qualified_palette_report") : "");
+  setLinkState(paypalPalette, paletteReady ? PAYPAL_PALETTE_URL : "");
+  setLinkState(checkoutWardrobe, wardrobeReady ? checkoutUrl("colorfitwardrobe", "qualified_wardrobe_report") : "");
+  setLinkState(paypalWardrobe, wardrobeReady ? PAYPAL_WARDROBE_URL : "");
+  paymentStatus.textContent = paletteReady
+    ? wardrobeReady
+      ? "The current reviewed palette qualifies for both packs. Compare real items in suitable light before paying."
+      : "The current reviewed palette qualifies for $19. Add a wardrobe-review scope and rebuild to qualify for $49."
+    : "Build a current high-quality palette with a complete human review record before payment links become available.";
 }
 
 function sampleRegion(x, y, radius = 7) {
@@ -127,6 +210,7 @@ async function loadPhoto(file) {
     photoStatus.textContent = "Choose an image smaller than 12 MB.";
     return;
   }
+  photoFingerprint = `${file.name}:${file.size}:${file.lastModified}`;
   invalidateResult("Loading a new photo. Analyze again after confirming the sample points.");
   if (sourceUrl) URL.revokeObjectURL(sourceUrl);
   sourceUrl = URL.createObjectURL(file);
@@ -212,6 +296,12 @@ function paidPackText() {
     "",
     `Photo quality: ${photoStats.quality}/100`,
     `Photo quality notes: ${photoStats.warnings.join(" ") || "No automatic lighting warning."}`,
+    `Photo source and capture conditions: ${photoSource.value.trim()}`,
+    `Photo checked date: ${photoCheckedDate.value}`,
+    `Human reviewer: ${humanReviewer.value.trim()}`,
+    `Intended shopping decision: ${shoppingDecision.value.trim()}`,
+    `Current review and limitations: ${reviewNotes.value.trim()}`,
+    `Wardrobe review scope: ${wardrobeScope.value.trim() || "Not requested"}`,
     "",
     paletteText,
     "",
@@ -225,15 +315,17 @@ function paidPackText() {
 }
 
 function updatePaidDownloadState(message) {
-  const paidPhotoReady = Boolean(photoStats) && photoStats.quality >= MIN_PAID_PHOTO_QUALITY;
-  if (downloadPack) downloadPack.disabled = !paidPackActive || !result || !paidPhotoReady;
+  const tierReady = paidPackEntitlement !== "wardrobe_color_review_pack" || wardrobeScopeReady();
+  if (downloadPack) downloadPack.disabled = !paidPackActive || !qualifiedPaletteReady() || !tierReady;
   if (proStatus && message) proStatus.textContent = message;
 }
 
 function invalidateResult(message) {
   result = null;
+  resultSignature = "";
   resultPanel.hidden = true;
   document.querySelector("#resultActions").hidden = true;
+  updatePaymentGate();
   updatePaidDownloadState(paidPackActive ? "Palette inputs changed. Analyze again before downloading the paid pack." : "Palette inputs changed. Analyze again before exporting.");
   if (message) photoStatus.textContent = message;
 }
@@ -271,12 +363,10 @@ async function verifyPaidPackCode(rawCode, { quiet = false } = {}) {
       return false;
     }
     localStorage.setItem(STORAGE_KEY, code);
-    const paidPhotoReady = Boolean(photoStats) && photoStats.quality >= MIN_PAID_PHOTO_QUALITY;
-    const ready = result
-      ? (paidPhotoReady
-          ? "Activation verified. Download your paid pack when ready."
-          : `Activation verified. Retake the photo in more even light; paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`)
-      : "Activation verified. Build a palette, then download your paid pack.";
+    const tierReady = product.entitlement !== "wardrobe_color_review_pack" || wardrobeScopeReady();
+    const ready = qualifiedPaletteReady() && tierReady
+      ? "Activation verified. Download your paid pack when ready."
+      : "Activation verified. Build a current qualified palette for this pack before downloading.";
     setPaidPackActive(true, quiet ? ready : ready, product.entitlement);
     return true;
   } catch {
@@ -290,12 +380,12 @@ function downloadPaidPack() {
     setPaidPackActive(false, "Activate a color pack before downloading.");
     return;
   }
-  if (!result) {
-    updatePaidDownloadState("Build a palette before downloading the paid pack.");
+  if (!qualifiedPaletteReady()) {
+    updatePaidDownloadState("Build the current qualified palette before downloading the paid pack.");
     return;
   }
-  if (!photoStats || photoStats.quality < MIN_PAID_PHOTO_QUALITY) {
-    updatePaidDownloadState(`Retake the photo in more even light. Paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`);
+  if (paidPackEntitlement === "wardrobe_color_review_pack" && !wardrobeScopeReady()) {
+    updatePaidDownloadState("Add the current wardrobe-review scope and rebuild before downloading the $49 pack.");
     return;
   }
   const blob = new Blob([paidPackText()], { type: "text/plain;charset=utf-8" });
@@ -311,6 +401,7 @@ function downloadPaidPack() {
 
 function renderResult() {
   result = analyzePalette(samples, photoStats?.quality ?? 60);
+  resultSignature = currentPaletteSignature();
   resultPanel.hidden = false;
   resultPanel.innerHTML = `
     <div class="result-heading">
@@ -356,6 +447,7 @@ function renderResult() {
     ? (paidPackActive ? "Palette ready. Download your paid pack when ready." : "Palette ready. Enter a CP- or CW- code to unlock a paid pack.")
     : `Free palette ready. Retake the photo in more even light before buying; paid downloads require photo quality ${MIN_PAID_PHOTO_QUALITY}/100 or higher.`;
   updatePaidDownloadState(readyMessage);
+  updatePaymentGate();
   resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -430,8 +522,17 @@ resetButton.addEventListener("click", () => {
   sourceUrl = "";
   sourceImage = null;
   photoStats = null;
+  photoFingerprint = "";
   invalidateResult();
   updatePaidDownloadState(paidPackActive ? "Build a palette before downloading the paid pack." : "Build a palette, then enter the code from your PayPal confirmation.");
+});
+reviewForm.addEventListener("input", () => {
+  if (result) invalidateResult("Review inputs changed. Build the palette again before copying, downloading, or paying.");
+  else updatePaymentGate();
+});
+reviewForm.addEventListener("change", () => {
+  if (result) invalidateResult("Review inputs changed. Build the palette again before copying, downloading, or paying.");
+  else updatePaymentGate();
 });
 exportButton.addEventListener("click", exportPalette);
 copyButton.addEventListener("click", async () => {
@@ -449,3 +550,6 @@ if (savedCode) {
   proCode.value = savedCode;
   verifyPaidPackCode(savedCode, { quiet: true });
 }
+
+photoCheckedDate.max = new Date().toISOString().slice(0, 10);
+updatePaymentGate();

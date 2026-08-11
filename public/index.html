@@ -82,6 +82,40 @@
           </section>
         </div>
 
+        <form class="review-panel" id="reviewForm">
+          <div class="panel-title"><span>03</span><div><h3>Record the current photo review</h3><p>The free palette works without this record. Complete it only before considering a paid pack.</p></div></div>
+          <div class="review-grid">
+            <label>
+              Photo source and capture conditions
+              <input id="photoSource" type="text" minlength="30" placeholder="Example: own unfiltered phone photo, indirect daylight, neutral wall" required />
+            </label>
+            <label>
+              Photo checked date
+              <input id="photoCheckedDate" type="date" required />
+            </label>
+            <label>
+              Human reviewer
+              <input id="humanReviewer" type="text" minlength="3" placeholder="Person confirming the samples and shopping use" required />
+            </label>
+            <label>
+              Intended shopping decision
+              <input id="shoppingDecision" type="text" minlength="20" placeholder="Specific garment, makeup, event, or wardrobe decision" required />
+            </label>
+          </div>
+          <label>
+            Current review and limitations notes
+            <textarea id="reviewNotes" rows="5" minlength="80" placeholder="Record lighting, filters, makeup or hair dye, manual sample checks, screen/fabric limits, and what will be compared in real daylight." required></textarea>
+          </label>
+          <label>
+            Wardrobe review scope for the $49 tier
+            <textarea id="wardrobeScope" rows="3" minlength="40" placeholder="Optional for free and $19. Describe the outfit-photo set, wardrobe question, and human review handoff."></textarea>
+          </label>
+          <label class="check-label">
+            <input id="reviewConfirmed" type="checkbox" required />
+            I own or am permitted to use this photo, confirmed the sample points myself, included no private identity or medical data, and understand the result is not an appearance, identity, health, or outcome judgment.
+          </label>
+        </form>
+
         <section class="result-panel" id="resultPanel" hidden></section>
         <div class="result-actions" id="resultActions" hidden>
           <button class="secondary-button" id="exportButton" type="button">Download palette PNG</button>
@@ -99,14 +133,14 @@
         <article>
           <span class="price">$19</span><h3>Personal Palette Pack</h3>
           <p>A printable palette, shopping checklist, outfit color formulas, and makeup reference sheet built from your confirmed samples.</p>
-          <a class="primary-button" href="https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&amp;product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_palette">Buy Personal Palette Pack</a>
-          <p class="fallback-note">PayPal fallback: <a href="https://www.paypal.com/ncp/payment/7P6JNH86HJRNU">7P6JNH86HJRNU</a></p>
+          <a class="primary-button" id="checkoutPalette" aria-disabled="true">Buy Personal Palette Pack</a>
+          <p class="fallback-note"><a id="paypalPalette" aria-disabled="true">PayPal fallback</a></p>
         </article>
         <article>
           <span class="price">$49</span><h3>Wardrobe Color Review</h3>
           <p>A browser-local review workbook for up to 12 outfit photos, keep-or-rethink notes, outfit formulas, and a practical gap-list template.</p>
-          <a class="primary-button" href="https://namebatch.pagecheckai.com/api/checkout?v=colorfit-20260731&amp;product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_wardrobe">Buy Wardrobe Color Review</a>
-          <p class="fallback-note">PayPal fallback: <a href="https://www.paypal.com/ncp/payment/MXDJV5SYXTR9W">MXDJV5SYXTR9W</a></p>
+          <a class="primary-button" id="checkoutWardrobe" aria-disabled="true">Buy Wardrobe Color Review</a>
+          <p class="fallback-note"><a id="paypalWardrobe" aria-disabled="true">PayPal fallback</a></p>
         </article>
       </section>
 
@@ -159,6 +193,7 @@
             <button class="secondary-button" id="downloadPack" type="button" disabled>Download paid pack</button>
           </div>
           <p id="proStatus" aria-live="polite">Build a palette, then enter the code from your PayPal confirmation.</p>
+          <p id="paymentStatus" aria-live="polite">Build a current high-quality palette with a complete human review record before payment links become available.</p>
           <p class="activation-help">After payment, enter the CP- or CW- activation code here. If you used a PayPal fallback, <a href="/support.html">open support</a> with the receipt.</p>
         </div>
       </section>

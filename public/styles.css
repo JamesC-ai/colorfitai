@@ -120,6 +120,14 @@ button { cursor: pointer; }
 .sampling-tip { margin: 22px 0; padding: 16px; border-left: 4px solid var(--mustard); background: #f8f2df; }
 .sampling-tip p { margin: 5px 0 0; color: #5c5237; font-size: 14px; }
 .text-button { display: block; margin: 14px auto 0; border: 0; background: transparent; color: var(--muted); text-decoration: underline; }
+.review-panel { margin-top: 28px; padding: 28px; border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow); }
+.review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.review-panel label { display: grid; gap: 7px; margin-top: 16px; font-weight: 750; }
+.review-panel input, .review-panel textarea { width: 100%; padding: 11px 12px; border: 1px solid #9ba6aa; border-radius: 4px; background: var(--white); color: var(--ink); font: inherit; }
+.review-panel textarea { resize: vertical; }
+.check-label { grid-template-columns: 20px 1fr !important; align-items: start; font-weight: 600 !important; line-height: 1.45; }
+.check-label input { width: 18px; height: 18px; margin: 2px 0 0; }
+[aria-disabled="true"] { pointer-events: none; opacity: .45; cursor: not-allowed; }
 
 .result-panel { margin-top: 28px; padding: 34px; border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow); scroll-margin-top: 20px; }
 .result-heading { display: flex; justify-content: space-between; gap: 24px; align-items: start; }
@@ -202,12 +210,13 @@ footer a { margin-left: 14px; }
   .canvas-shell { min-height: 320px; }
   .palette-grid { grid-template-columns: repeat(2, 1fr); }
   .recommendation-grid { grid-template-columns: 1fr; }
+  .review-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
   .analyzer, .boundary-band, .offer-band, .buyer-band, .activation-band, .guide-band { padding-left: 16px; padding-right: 16px; }
   .trust-strip { grid-template-columns: 1fr 1fr; }
-  .photo-panel, .sample-panel, .result-panel { padding: 18px; }
+  .photo-panel, .sample-panel, .result-panel, .review-panel { padding: 18px; }
   .upload-control, .result-heading, footer { align-items: stretch; flex-direction: column; }
   .upload-control input { width: 100%; }
   .quality { grid-template-columns: 1fr; }

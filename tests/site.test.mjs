@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 import { analyzePalette, computeImageStats, rgbToHex } from "../public/color-engine.js";
 
@@ -99,10 +99,15 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(home, /Good fit for \$49/);
   assert.match(home, /Skip payment when/);
   assert.match(home, /photo stays in this browser/i);
-  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_palette/);
-  assert.match(home, /https:\/\/namebatch\.pagecheckai\.com\/api\/checkout\?v=colorfit-20260731&amp;product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=home_wardrobe/);
-  assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/7P6JNH86HJRNU/);
-  assert.match(home, /https:\/\/www\.paypal\.com\/ncp\/payment\/MXDJV5SYXTR9W/);
+  assert.match(home, /id="checkoutPalette"[^>]*aria-disabled="true"/);
+  assert.match(home, /id="checkoutWardrobe"[^>]*aria-disabled="true"/);
+  assert.match(home, /id="photoSource"[^>]*minlength="30"[^>]*required/);
+  assert.match(home, /id="photoCheckedDate"[^>]*required/);
+  assert.match(home, /id="humanReviewer"[^>]*minlength="3"[^>]*required/);
+  assert.match(home, /id="shoppingDecision"[^>]*minlength="20"[^>]*required/);
+  assert.match(home, /id="reviewNotes"[^>]*minlength="80"[^>]*required/);
+  assert.match(home, /id="reviewConfirmed"[^>]*required/);
+  assert.doesNotMatch(home, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/);
   assert.match(home, /Enter a CP- or CW- code/);
   assert.match(home, /After payment, enter the CP- or CW- activation code here/);
   assert.match(home, /open support/);
@@ -123,8 +128,9 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(terms, /not a professional certification/i);
   assert.match(support, /Photo checklist/);
   assert.match(support, /generated locally from the palette result/);
-  assert.match(support, /product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=support_palette/);
-  assert.match(support, /product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=support_wardrobe/);
+  assert.match(support, /Build the free current palette before payment/);
+  assert.match(support, /Prepare the free current palette/);
+  assert.doesNotMatch(support, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/);
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
@@ -151,8 +157,15 @@ test("paid pack activation stays product-scoped and browser-local", async () => 
   assert.match(app, /photoStats = null/);
   assert.match(app, /MIN_PAID_PHOTO_QUALITY = 70/);
   assert.match(app, /photoStats\.quality >= MIN_PAID_PHOTO_QUALITY/);
-  assert.match(app, /Paid downloads require photo quality \$\{MIN_PAID_PHOTO_QUALITY\}\/100 or higher/);
+  assert.match(app, /Build a current qualified palette for this pack before downloading/);
   assert.match(app, /Photo quality: \$\{photoStats\.quality\}\/100/);
+  assert.match(app, /function currentPaletteSignature/);
+  assert.match(app, /function qualifiedPaletteReady/);
+  assert.match(app, /function updatePaymentGate/);
+  assert.match(app, /qualified_palette_report/);
+  assert.match(app, /qualified_wardrobe_report/);
+  assert.match(app, /photoCheckedDate\.value <= today/);
+  assert.match(app, /Review inputs changed\. Build the palette again before copying, downloading, or paying/);
 });
 
 test("new shopping pages avoid identity and outcome claims", async () => {
@@ -177,12 +190,22 @@ test("renders all shopping pages with privacy and accuracy boundaries", async ()
     assert.match(html, /ColorFitAI/);
     assert.match(html, /Confirm the cheek, natural hair, and iris sample points yourself/);
     assert.match(html, /When a paid palette pack is worth it/);
-    assert.match(html, /Buy the \$19 Personal Palette Pack only when/);
+    assert.match(html, /Review paid-pack boundaries in the analyzer only after/);
     assert.match(html, /Skip payment if you need an appearance rating/);
     assert.match(html, /compare the real fabric, makeup sample, or metal near your face before buying/i);
     assert.match(html, /does not infer identity, ethnicity, health, age, or attractiveness/);
-    assert.match(html, new RegExp(`product=colorfitai&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=seo_${route}_palette`));
-    assert.match(html, new RegExp(`product=colorfitwardrobe&amp;utm_source=colorfitai&amp;utm_medium=owned&amp;utm_campaign=conversion&amp;utm_content=seo_${route}_wardrobe`));
+    assert.match(html, new RegExp(`utm_content=seo_${route}_free_palette#analyzer`));
+    assert.doesNotMatch(html, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/);
+  }
+});
+
+test("all static HTML stays free-first without direct payment destinations", async () => {
+  const files = await readdir("dist", { recursive: true });
+  const htmlFiles = files.filter((file) => file.endsWith(".html"));
+  assert.ok(htmlFiles.length >= 79);
+  for (const file of htmlFiles) {
+    const html = await readFile(`dist/${file}`, "utf8");
+    assert.doesNotMatch(html, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/, file);
   }
 });
 
