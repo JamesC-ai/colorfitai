@@ -388,15 +388,22 @@ function downloadPaidPack() {
     updatePaidDownloadState("Add the current wardrobe-review scope and rebuild before downloading the $49 pack.");
     return;
   }
-  const blob = new Blob([paidPackText()], { type: "text/plain;charset=utf-8" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = paidPackEntitlement === "wardrobe_color_review_pack"
-    ? "colorfitai-wardrobe-color-review.txt"
-    : "colorfitai-personal-palette-pack.txt";
-  link.click();
-  URL.revokeObjectURL(link.href);
-  updatePaidDownloadState("Paid pack downloaded locally.");
+  try {
+    const blob = new Blob([paidPackText()], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = paidPackEntitlement === "wardrobe_color_review_pack"
+      ? "colorfitai-wardrobe-color-review.txt"
+      : "colorfitai-personal-palette-pack.txt";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    updatePaidDownloadState("Paid pack download started. Wait for your browser to confirm the file.");
+  } catch {
+    updatePaidDownloadState("Paid pack download could not start. Your current qualified palette and activation are still available; try again.");
+  }
 }
 
 function renderResult() {

@@ -166,6 +166,11 @@ test("paid pack activation stays product-scoped and browser-local", async () => 
   assert.match(app, /qualified_wardrobe_report/);
   assert.match(app, /photoCheckedDate\.value <= today/);
   assert.match(app, /Review inputs changed\. Build the palette again before copying, downloading, or paying/);
+  assert.match(app, /window\.setTimeout\(\(\) => URL\.revokeObjectURL\(url\), 1000\)/);
+  assert.match(app, /Paid pack download started\. Wait for your browser to confirm the file\./);
+  assert.match(app, /Your current qualified palette and activation are still available; try again\./);
+  assert.doesNotMatch(app, /Paid pack downloaded locally\./);
+  assert.doesNotMatch(app, /link\.click\(\);\s*URL\.revokeObjectURL\(link\.href\);/);
 });
 
 test("new shopping pages avoid identity and outcome claims", async () => {
