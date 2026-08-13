@@ -15,8 +15,9 @@
   - User-confirmable skin, hair, and eye reference points live
   - Clothing, neutral, makeup, jewelry, and hair-color output live
   - PNG export and copyable shopping list live
-  - 45 SEO pages plus privacy, terms, support, robots, and sitemap live
+  - 75 SEO pages plus privacy, terms, support, robots, and a 79-URL sitemap live
   - Cloudflare custom domain active
-  - IndexNow submitted 49 URLs
+  - IndexNow submitted 79 URLs
   - Both PayPal payment links live
+  - Support email entry point live with minimum-disclosure guidance
   - Latest expansion covers winter coats, summer weddings, interview blazers, capsule accents, hair-color wardrobe planning, foundation undertone shopping, shoe and bag colors, travel photos, presentation outfits, and athleisure palettes

@@ -130,6 +130,8 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(support, /generated locally from the palette result/);
   assert.match(support, /Prepare the free current palette report before payment/);
   assert.match(support, /Prepare the free current palette/);
+  assert.match(support, /mailto:support@pagecheckai\.com\?subject=ColorFitAI%20support/);
+  assert.match(support, /Do not email photos, sampled colors, palette results/);
   assert.doesNotMatch(support, /namebatch\.pagecheckai\.com\/api\/checkout|paypal\.com\/ncp\/payment/);
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
