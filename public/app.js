@@ -350,12 +350,16 @@ async function verifyPaidPackCode(rawCode, { quiet = false } = {}) {
     setPaidPackActive(false, quiet ? "Enter a valid CP- or CW- code to unlock a color pack." : "That activation code format is not valid.");
     return false;
   }
+  activatePack.disabled = true;
   if (!quiet) proStatus.textContent = "Checking activation code...";
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 10000);
   try {
     const response = await fetch(LICENSE_VERIFY_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ code, product: product.product }),
+      signal: controller.signal,
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.valid || data.entitlement !== product.entitlement) {
@@ -370,8 +374,11 @@ async function verifyPaidPackCode(rawCode, { quiet = false } = {}) {
     setPaidPackActive(true, quiet ? ready : ready, product.entitlement);
     return true;
   } catch {
-    setPaidPackActive(false, "Could not reach the license service. Try again, or use support with your PayPal receipt.");
+    setPaidPackActive(false, "Activation timed out or is temporarily unavailable. Your palette remains on this device; retry shortly.");
     return false;
+  } finally {
+    window.clearTimeout(timeout);
+    activatePack.disabled = false;
   }
 }
 
@@ -543,11 +550,20 @@ reviewForm.addEventListener("change", () => {
 });
 exportButton.addEventListener("click", exportPalette);
 copyButton.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(resultText());
-  copyButton.textContent = "Copied";
-  setTimeout(() => {
-    copyButton.textContent = "Copy shopping list";
-  }, 1200);
+  if (!qualifiedPaletteReady()) return;
+  copyButton.disabled = true;
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+    await navigator.clipboard.writeText(resultText());
+    copyButton.textContent = "Copied";
+    window.setTimeout(() => {
+      copyButton.textContent = "Copy shopping list";
+    }, 1200);
+  } catch {
+    copyButton.textContent = "Copy failed - retry";
+  } finally {
+    copyButton.disabled = !qualifiedPaletteReady();
+  }
 });
 activatePack?.addEventListener("click", () => verifyPaidPackCode(proCode.value));
 downloadPack?.addEventListener("click", downloadPaidPack);
