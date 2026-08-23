@@ -79,6 +79,7 @@ const seoRoutes = [
   "small-closet-color-system",
   "thrift-store-color-filter-checklist",
   "makeup-and-wardrobe-color-handoff",
+  "color-analysis-photo-consistency-checklist",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -136,10 +137,19 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 79);
+  assert.equal(sitemapUrls.length, 80);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
+});
+
+test("renders a photo consistency gate instead of a permanent classification", async () => {
+  const html = await readFile("dist/color-analysis-photo-consistency-checklist/index.html", "utf8");
+  assert.match(html, /lighting, camera processing, exposure, background reflection, filters, makeup, hair color, and sample placement/i);
+  assert.match(html, /pause analysis, keep only comparable captures/i);
+  assert.match(html, /real fabric in consistent daylight rather than force a permanent season label/i);
+  assert.match(html, /utm_content=seo_color-analysis-photo-consistency-checklist_free_palette#analyzer/);
+  assert.doesNotMatch(html, /definitely a (spring|summer|autumn|winter)|guaranteed accurate|identity detection/i);
 });
 
 test("paid pack activation stays product-scoped and browser-local", async () => {

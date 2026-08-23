@@ -528,6 +528,13 @@ const pages = [
     headline: "Make makeup and outfit colors support each other.",
     intent: "People comparing lipstick, blush, eyeshadow, neckline, jewelry, and clothing colors before buying or packing.",
   },
+  {
+    slug: "color-analysis-photo-consistency-checklist",
+    title: "Color analysis photo consistency checklist",
+    description: "Compare lighting, camera processing, exposure, background reflection, filters, makeup, hair color, and sample placement before trusting a photo set.",
+    headline: "Reject inconsistent color-analysis photos before choosing a palette.",
+    intent: "People who look different across photos and need to pause analysis, keep only comparable captures, and verify color families with real fabric in consistent daylight rather than force a permanent season label.",
+  },
 ];
 
 function escapeHtml(value) {
