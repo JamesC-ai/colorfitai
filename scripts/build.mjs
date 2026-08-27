@@ -535,6 +535,13 @@ const pages = [
     headline: "Reject inconsistent color-analysis photos before choosing a palette.",
     intent: "People who look different across photos and need to pause analysis, keep only comparable captures, and verify color families with real fabric in consistent daylight rather than force a permanent season label.",
   },
+  {
+    slug: "color-analysis-white-balance-capture-log",
+    title: "Color analysis white balance capture log",
+    description: "Record device, lens, camera mode, white-balance setting, exposure, light source, time, background, and reference neutral before comparing color-analysis photos.",
+    headline: "Document capture conditions before comparing skin-adjacent colors.",
+    intent: "People comparing phone or camera photos who need to compare only captures made under the same documented conditions. This log does not calibrate a camera, correct a photo, recover true skin color, or prove undertone.",
+  },
 ];
 
 function escapeHtml(value) {

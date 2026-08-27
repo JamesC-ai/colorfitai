@@ -80,6 +80,7 @@ const seoRoutes = [
   "thrift-store-color-filter-checklist",
   "makeup-and-wardrobe-color-handoff",
   "color-analysis-photo-consistency-checklist",
+  "color-analysis-white-balance-capture-log",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -137,10 +138,18 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 80);
+  assert.equal(sitemapUrls.length, 81);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
+});
+
+test("renders a white-balance capture log without promising photo accuracy", async () => {
+  const html = await readFile("dist/color-analysis-white-balance-capture-log/index.html", "utf8");
+  assert.match(html, /device, lens, camera mode, white-balance setting, exposure, light source, time, background, and reference neutral/i);
+  assert.match(html, /does not calibrate a camera, correct a photo, recover true skin color, or prove undertone/i);
+  assert.match(html, /compare only captures made under the same documented conditions/i);
+  assert.match(html, /utm_content=seo_color-analysis-white-balance-capture-log_free_palette#analyzer/);
 });
 
 test("renders a photo consistency gate instead of a permanent classification", async () => {
