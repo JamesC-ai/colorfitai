@@ -542,6 +542,13 @@ const pages = [
     headline: "Document capture conditions before comparing skin-adjacent colors.",
     intent: "People comparing phone or camera photos who need to compare only captures made under the same documented conditions. This log does not calibrate a camera, correct a photo, recover true skin color, or prove undertone.",
   },
+  {
+    slug: "screen-to-fabric-color-verification-checklist",
+    title: "Screen-to-fabric color verification checklist",
+    description: "Record the retailer color name, product URL, device, display brightness, and reference palette before comparing an online swatch with a delivered garment.",
+    headline: "Verify an online color against the real fabric before keeping it.",
+    intent: "Online shoppers who need to compare the physical fabric in consistent indirect daylight and check the return window. A screen swatch is not proof of the fabric color or how it will look in every setting.",
+  },
 ];
 
 function escapeHtml(value) {

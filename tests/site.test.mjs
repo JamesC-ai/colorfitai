@@ -81,6 +81,7 @@ const seoRoutes = [
   "makeup-and-wardrobe-color-handoff",
   "color-analysis-photo-consistency-checklist",
   "color-analysis-white-balance-capture-log",
+  "screen-to-fabric-color-verification-checklist",
 ];
 
 test("build includes the product, legal pages, and sitemap", async () => {
@@ -138,10 +139,18 @@ test("build includes the product, legal pages, and sitemap", async () => {
   assert.match(privacy, /does not send the photo, sampled colors, or palette text/);
   assert.match(terms, /browser-generated planning files/);
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert.equal(sitemapUrls.length, 81);
+  assert.equal(sitemapUrls.length, 82);
   for (const route of seoRoutes) {
     assert.ok(sitemapUrls.includes(`https://colorfit.pagecheckai.com/${route}/`), `missing sitemap route: ${route}`);
   }
+});
+
+test("renders a screen-to-fabric verification checklist without claiming color equivalence", async () => {
+  const html = await readFile("dist/screen-to-fabric-color-verification-checklist/index.html", "utf8");
+  assert.match(html, /retailer color name, product URL, device, display brightness, and reference palette/i);
+  assert.match(html, /compare the physical fabric in consistent indirect daylight/i);
+  assert.match(html, /screen swatch is not proof of the fabric color/i);
+  assert.match(html, /return window/i);
 });
 
 test("renders a white-balance capture log without promising photo accuracy", async () => {
